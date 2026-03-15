@@ -33,7 +33,9 @@
                     </div>
                 </section>
             </div>
-            <div class="image-col"></div>
+            <div class="image-col">
+                <PortfolioGallery />
+            </div>
         </UMain>
     </div>
 </template>
