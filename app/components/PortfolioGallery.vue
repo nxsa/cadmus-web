@@ -1,19 +1,18 @@
 <template>
     <section class="portfolio-gallery">
-        <div v-if="status === 'pending'" class="gallery-state">Loading images…</div>
+        <div v-if="status === 'pending' || !data" class="gallery-state">Loading images…</div>
         <div v-else-if="error" class="gallery-state">Unable to load images.</div>
         <div v-else-if="!images.length" class="gallery-state">No images found.</div>
-        <div v-else class="gallery-grid">
-            <figure v-for="img in images" :key="img.filename" class="gallery-card">
+        <TransitionGroup v-else name="gallery" tag="div" class="gallery-grid">
+            <figure v-for="(img, index) in images" :key="img.filename" class="gallery-card"
+                :style="{ transitionDelay: `${Math.min(index * 40, 200)}ms` }">
                 <img :src="img.url" :alt="img.filename" loading="lazy" decoding="async" />
             </figure>
-        </div>
+        </TransitionGroup>
     </section>
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue';
-
 interface ImageEntry {
     filename: string;
     url: string;
@@ -26,8 +25,8 @@ interface PortfolioResponse {
 }
 
 const { data, error, pending, refresh } = await useFetch<PortfolioResponse>('/portfolio/index.json', {
-    // disable auto client-side refresh, but let SSR fetch it
-    server: true,
+    // public assets are served by the browser, not as Nitro server routes
+    server: false,
     lazy: false,
 });
 

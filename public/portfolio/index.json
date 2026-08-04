@@ -1,3 +1,34 @@
 {
-  "images": []
+  "images": [
+    {
+      "filename": "ethicaresolve_1.webp",
+      "url": "/portfolio/images/ethicaresolve_1.webp",
+      "size": 112850,
+      "uploadedAt": "2026-08-04T19:04:27.555Z"
+    },
+    {
+      "filename": "stacs_logo.webp",
+      "url": "/portfolio/images/stacs_logo.webp",
+      "size": 14506,
+      "uploadedAt": "2026-08-04T19:04:20.253Z"
+    },
+    {
+      "filename": "ethicaresolve_2.webp",
+      "url": "/portfolio/images/ethicaresolve_2.webp",
+      "size": 110760,
+      "uploadedAt": "2026-08-04T19:04:26.545Z"
+    },
+    {
+      "filename": "fika.webp",
+      "url": "/portfolio/images/fika.webp",
+      "size": 32314,
+      "uploadedAt": "2026-08-04T19:04:29.656Z"
+    },
+    {
+      "filename": "stacs_logomark.webp",
+      "url": "/portfolio/images/stacs_logomark.webp",
+      "size": 4244,
+      "uploadedAt": "2026-08-04T19:04:19.487Z"
+    }
+  ]
 }

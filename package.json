@@ -3,7 +3,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "prebuild": "node ./scripts/generate-portfolio-index.mjs",
+    "portfolio:index": "node ./scripts/generate-portfolio-index.mjs",
+    "predev": "npm run portfolio:index",
+    "prebuild": "npm run portfolio:index",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",

@@ -132,14 +132,16 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 ## Static Portfolio
 
-Place image files into `public/portfolio/` (allowed: `.webp`, `.jpg`, `.jpeg`, `.png`, `.avif`).
+Place image files into `public/portfolio/images/` (allowed: `.webp`, `.jpg`, `.jpeg`, `.png`, `.avif`).
+
+To control the display order, edit `public/portfolio/images/order.json` with the filenames you want first. Any supported images not listed there are appended automatically, newest first. Adding a new image only requires placing it in the images folder.
 
 Before building, generate `public/portfolio/index.json` with:
 
 ```bash
-node ./scripts/generate-portfolio-index.mjs
+npm run portfolio:index
 ```
 
-This will create `public/portfolio/index.json` listing files (newest-first). The build step runs this automatically via `npm run build` because a `prebuild` script is defined.
+This will create `public/portfolio/index.json` listing the image files in the configured order. The `dev` and `build` scripts run this automatically before starting, so new images are picked up when you restart either command.
 
 The homepage uses `PortfolioGallery` to server-render the static gallery from that index for SEO.
