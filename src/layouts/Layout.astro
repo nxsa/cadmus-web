@@ -1,0 +1,28 @@
+---
+import "../styles/global.css";
+
+interface Props {
+    title?: string;
+}
+
+const { title = "Cadmus - Product Design Studio" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+        <meta
+            name="description"
+            content="A small design studio crafting thoughtful, polished visuals for web and software products, helping ideas become clear, functional, and beautifully executed."
+        />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="preload" as="font" type="font/ttf" href="/fonts/haffer-xh-400.ttf" crossorigin />
+        <link rel="preload" as="font" type="font/ttf" href="/fonts/haffer-xh-600.ttf" crossorigin />
+    </head>
+    <body>
+        <slot />
+    </body>
+</html>

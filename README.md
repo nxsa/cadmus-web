@@ -1,12 +1,14 @@
 # Cadmus Web
 
-Nuxt 4 + Cloudflare Worker site with authenticated admin image uploads to R2 and runtime-rendered homepage gallery.
+Astro site deployed as a Cloudflare Worker. The homepage is prerendered to static
+HTML at build time; the Worker exists so on-demand routes can be added later.
+Portfolio images live in `public/portfolio/images/` and are rendered into the page
+from a generated manifest.
 
 ## Prerequisites
 
-- Node.js 20+
-- Cloudflare account
-- R2 bucket named `cadmus-portfolio` (or update `wrangler.jsonc`)
+- Node.js 22.22 or newer (see `.node-version`)
+- A Cloudflare account, for deploys
 
 ## Install
 
@@ -14,23 +16,7 @@ Nuxt 4 + Cloudflare Worker site with authenticated admin image uploads to R2 and
 npm install
 ```
 
-## Configure secrets
-
-Set secrets with Wrangler:
-
-```bash
-# Generate SHA-256 hash for your admin password
-node -e "const c=require('node:crypto');console.log(c.createHash('sha256').update(process.argv[1]).digest('hex'))" "your-password"
-
-wrangler secret put ADMIN_PASSWORD_HASH
-wrangler secret put SESSION_SECRET
-```
-
-Notes:
-
-- `ADMIN_PASSWORD_HASH` must be a 64-character SHA-256 hex string.
-- `SESSION_SECRET` should be at least 32 random characters.
-- `MAX_UPLOAD_FILE_BYTES` defaults to 10MB and can be changed in `wrangler.jsonc`.
+`postinstall` runs `astro sync` to generate types.
 
 ## Development
 
@@ -38,110 +24,57 @@ Notes:
 npm run dev
 ```
 
-Admin routes:
+Serves on `http://localhost:4321`.
 
-- `/admin/login`
-- `/admin/upload` (protected)
-
-## API overview
-
-- `POST /api/admin/login` → start admin session
-- `POST /api/admin/logout` → clear session
-- `GET /api/admin/session` → session status
-- `POST /api/admin/upload` → protected multi-image upload
-- `GET /api/images` → newest-first image list
-- `GET /api/images/:key` → proxied image stream from R2
-
-## Test
-
-# Nuxt Minimal Starter
-
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
-## Setup
-
-Make sure to install dependencies:
+> `astro dev` is currently blocked by an upstream bug in the Cloudflare adapter's dev
+> runner (`Missing field moduleType`). See `docs/migration-nuxt-to-astro.md`. Use the
+> production-faithful loop below in the meantime.
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+npm run preview   # astro build && wrangler dev
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Build and deploy
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+npm run build     # output in dist/client (assets) and dist/server (Worker)
+npm run deploy    # astro build && wrangler deploy
 ```
 
-## Production
+The `@astrojs/cloudflare` adapter writes the Worker's `main` entry and `ASSETS` asset
+binding into `dist/server/wrangler.json`, and `wrangler deploy` reads that through
+`.wrangler/deploy/config.json`. `wrangler.jsonc` holds only the settings that stay
+under your control (name, compatibility date and flags, observability).
 
-Build the application for production:
+## Static portfolio
 
-```bash
-# npm
-npm run build
+Place image files into `public/portfolio/images/` (allowed: `.webp`, `.jpg`, `.jpeg`,
+`.png`, `.avif`).
 
-# pnpm
-pnpm build
+To control display order, edit `public/portfolio/images/order.json` with the filenames
+you want first. Any supported images not listed there are appended automatically,
+newest first. Adding an image only requires placing it in the images folder.
 
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Static Portfolio
-
-Place image files into `public/portfolio/images/` (allowed: `.webp`, `.jpg`, `.jpeg`, `.png`, `.avif`).
-
-To control the display order, edit `public/portfolio/images/order.json` with the filenames you want first. Any supported images not listed there are appended automatically, newest first. Adding a new image only requires placing it in the images folder.
-
-Before building, generate `public/portfolio/index.json` with:
+`public/portfolio/index.json` is the generated manifest the homepage reads at build
+time. Regenerate it with:
 
 ```bash
 npm run portfolio:index
 ```
 
-This will create `public/portfolio/index.json` listing the image files in the configured order. The `dev` and `build` scripts run this automatically before starting, so new images are picked up when you restart either command.
+`dev` and `build` both run this automatically first, so new images are picked up when
+you restart either command. Commit the regenerated manifest alongside new images.
 
-The homepage uses `PortfolioGallery` to server-render the static gallery from that index for SEO.
+## Planned, not implemented
+
+The following was specified in the original upload brief but is **not** part of this
+codebase. Nothing below exists yet:
+
+- Private `/admin/upload` page with drag-and-drop, progress, and preview
+- Session-based admin authentication (`ADMIN_PASSWORD_HASH`, `SESSION_SECRET`)
+- `POST /api/admin/login`, `POST /api/admin/logout`, `GET /api/admin/session`
+- `POST /api/admin/upload` storing images in an R2 bucket (`cadmus-portfolio`)
+- `GET /api/images` and `GET /api/images/:key` for a runtime-rendered gallery
+
+The migration kept the Worker (rather than going fully static) so these can be added
+as on-demand routes under `src/pages/api/` without reworking the deploy.

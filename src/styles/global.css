@@ -1,11 +1,23 @@
 @import "tailwindcss";
-@import "@nuxt/ui";
 
+@font-face {
+    font-family: "Haffer XH";
+    src: local("Haffer XH Regular"), local("Haffer XH"), url("/fonts/haffer-xh-400.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Haffer XH";
+    src: local("Haffer XH SemiBold"), url("/fonts/haffer-xh-600.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 
 @theme {
     --font-sans: 'Haffer XH', -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
 }
 
 body {
@@ -38,8 +50,8 @@ body {
 }
 
 .image-col {
-    background-color: var(--color-stone-50);
-    border-left: 1px solid var(--color-stone-100);
+    background-color: #fafaf9;
+    border-left: 1px solid #f5f5f4;
 }
 
 .index-link {
@@ -60,8 +72,6 @@ body {
     max-width: 400px;
 }
 
-
-
 .ct-title {
     font-weight: 600;
     font-size: 28px;
@@ -80,18 +90,15 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--color-stone-600);
+    color: #57534e;
     text-align: center;
     padding: 20px;
 }
-
-
 
 .portfolio-gallery {
     height: 100vh;
     overflow-y: auto;
     background: #FFFFFF;
-
 }
 
 .gallery-grid {
@@ -103,6 +110,8 @@ body {
 .gallery-card {
     overflow: hidden;
     background: #fff;
+    animation: gallery-reveal 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation-delay: var(--gallery-delay, 0ms);
 }
 
 .gallery-card img {
@@ -111,20 +120,16 @@ body {
     display: block;
 }
 
-.gallery-enter-active,
-.gallery-leave-active {
-    transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
-        transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
-}
+@keyframes gallery-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
 
-.gallery-enter-from,
-.gallery-leave-to {
-    opacity: 0;
-    transform: translateY(8px);
-}
-
-.gallery-move {
-    transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media only screen and (max-width: 1280px) {
@@ -169,9 +174,8 @@ body {
         transform: scale(0.99);
     }
 
-    .gallery-enter-active,
-    .gallery-leave-active,
-    .gallery-move {
-        transition-duration: 120ms;
+    .gallery-card {
+        animation-duration: 120ms;
+        animation-delay: 0ms;
     }
 }
