@@ -76,29 +76,24 @@ Build output moved from `.output/` to `dist/` (`dist/client/` for assets,
   `/logo/cadmus-logo.svg`, `/fonts/haffer-xh-400.ttf`, `/portfolio/index.json`, and
   `/portfolio/images/*.webp` all return 200 with the expected content types.
 
-## Known issue: `astro dev`
+## Resolved issue: `astro dev` and the pinned Vite plugin
 
-`npm run dev` currently fails at startup with:
+`npm run dev` initially failed at startup with an error reading `Missing field
+moduleType`, thrown from the Cloudflare Vite plugin's dev-only runner path
+(`runInRunnerObject` in `workers/runner-worker/index.js`) before the server bound a
+port.
 
-```
-Missing field `moduleType`
-    at runInRunnerObject (workers/runner-worker/index.js:107:3)
-```
+It is **not** caused by this migration. A bare-minimum `astro.config.mjs` containing
+only `output: "server"` and `cloudflare()` fails identically, and the error is
+unrelated to the workerd or miniflare version.
 
-This originates inside the Cloudflare Vite plugin's dev-only runner path. It is **not**
-caused by this migration: a bare-minimum `astro.config.mjs` containing only
-`output: "server"` and `cloudflare()` fails identically, and the error reproduces
-across two workerd releases and both miniflare 5 betas. The plugin's
-`unsafeModuleFallbackService` responds with `{ wasm }` / `{ data }` / `{ text }` and no
-`moduleType`, while the installed workerd expects that field in its capnp module
-schema.
+The actual cause is the Vite plugin version. `@astrojs/cloudflare` depends on
+`@cloudflare/vite-plugin: ^1.63.1`, which npm resolves to `1.64.0`, and `1.64.0` breaks
+the dev runner. Pinning `1.63.2` in `package.json` via `overrides` fixes it.
 
-Until that is fixed upstream, use the production-faithful local loop, which is
-verified working:
-
-```bash
-npm run preview   # astro build && wrangler dev
-```
+Verified with the pin in place: `npm run dev` serves the homepage and every static
+asset, `npm run build` succeeds, and `wrangler deploy --dry-run` still reports only the
+`env.ASSETS` binding. `1.63.1` also works; `1.64.0` does not.
 
 ## Note: `cf-typegen`
 
