@@ -1,35 +1,27 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: "Haffer XH";
-    src: local("Haffer XH Regular"), local("Haffer XH"), url("/fonts/haffer-xh-400.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Haffer XH";
-    src: local("Haffer XH SemiBold"), url("/fonts/haffer-xh-600.ttf") format("truetype");
-    font-weight: 600;
+    font-family: "General Sans";
+    src: url("/fonts/GeneralSans-Variable.ttf") format("truetype");
+    font-weight: 100 700;
     font-style: normal;
     font-display: swap;
 }
 
 @theme {
-    --font-sans: 'Haffer XH', -apple-system, sans-serif;
+    --font-sans: 'General Sans', -apple-system, sans-serif;
 }
 
 body {
-    @apply text-stone-950 font-sans;
-    font-weight: 400;
+    @apply text-stone-900 font-sans;
+    font-weight: 450;
 }
 
 .btn {
     cursor: pointer;
     transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
     border-radius: 9999px;
-    font-weight: 600;
+    font-weight: 500;
     position: relative;
 }
 
@@ -73,14 +65,14 @@ body {
 }
 
 .ct-title {
-    font-weight: 600;
+    font-weight: 550;
     font-size: 28px;
     line-height: 1.25;
 }
 
 .ct-desc {
     font-size: 16px;
-    line-height: 1.44;
+    line-height: 1.5;
 }
 
 .gallery-state {
