@@ -1,21 +1,20 @@
 /**
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
+ *
+ * The `@astrojs/cloudflare` adapter injects `main` and the `ASSETS` asset
+ * binding into the generated `dist/server/wrangler.json` at build time, so they
+ * are intentionally not set here. Anything declared below is merged through to
+ * the deploy manifest.
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "cadmus",
-  "main": "./.output/server/index.mjs",
   "compatibility_date": "2026-02-12",
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./.output/public/",
-  },
-
+  "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
   },
-  "compatibility_flags": ["nodejs_compat"],
   /**
    * Smart Placement
    * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

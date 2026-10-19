@@ -1,0 +1,53 @@
+---
+import manifest from "../../public/portfolio/index.json";
+
+interface ImageEntry {
+    filename: string;
+    url: string;
+    size: number;
+    uploadedAt: string;
+}
+
+interface PortfolioResponse {
+    images: ImageEntry[];
+}
+
+const { images } = manifest as PortfolioResponse;
+---
+
+<section class="portfolio-gallery">
+    {
+        images.length ? (
+            <div class="gallery-grid">
+                {images.map((img, index) => (
+                    <figure
+                        class="gallery-card"
+                        style={`--gallery-delay: ${Math.min(index * 40, 200)}ms`}
+                    >
+                        <img src={img.url} alt={img.filename} loading="lazy" decoding="async" />
+                    </figure>
+                ))}
+            </div>
+        ) : (
+            <div class="gallery-state">No images found.</div>
+        )
+    }
+</section>
+<noscript>
+    <style is:global>
+        .gallery-card img {
+            opacity: 1;
+        }
+    </style>
+</noscript>
+<script is:inline>
+    document.querySelectorAll(".gallery-card img").forEach((img) => {
+        const reveal = () => img.classList.add("is-loaded");
+        if (img.complete && img.naturalWidth > 0) {
+            reveal();
+        } else {
+            img.addEventListener("load", reveal, { once: true });
+            img.addEventListener("error", reveal, { once: true });
+        }
+    });
+</script>
